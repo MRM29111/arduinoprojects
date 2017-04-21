@@ -1,0 +1,109 @@
+/*
+  Stepper Motor Control
+*/
+int buttonPin = 2;
+int buttonPin2 = 3;
+int buttonPin3 = 4;
+boolean buttonState = LOW;
+boolean buttonState2 = LOW;
+boolean buttonState3 = LOW;
+int motorEnabled = 0;
+boolean previousButtonState = LOW;
+boolean previousButtonState2 = LOW;
+boolean previousButtonState3 = LOW;
+int t = 2400;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(buttonPin, INPUT);
+  pinMode(buttonPin2, INPUT);
+  pinMode(buttonPin3, INPUT);
+  pinMode(8, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+}
+
+void loop() {
+  buttonState = digitalRead(buttonPin); // On-Off button
+  if (previousButtonState != buttonState && buttonState == HIGH) {
+    motorEnabled = !motorEnabled;
+  }
+  if (motorEnabled == 1) {
+    step1();
+    step2();
+    step3();
+    step4();
+  }
+  else {
+    stoprotate();
+    t = 2800;
+  }
+  previousButtonState = buttonState;
+
+
+
+  buttonState2 = digitalRead(buttonPin2); // "+" Speed button
+  if (buttonState2 == HIGH)
+  {
+    delay(120);
+    if ( buttonState2 != digitalRead(buttonPin2) )
+    {
+      buttonState2 = LOW;
+    }
+  }
+  if ( buttonState2 == HIGH && t >= 1900 ) {
+    t = t - 100;
+  }
+  Serial.println(t);
+
+
+  buttonState3 = digitalRead(buttonPin3); // "-" Speed button
+  if (buttonState3 == HIGH)
+  {
+    delay(120);
+    if ( buttonState3 != digitalRead(buttonPin3) )
+    {
+      buttonState3 = LOW;
+    }
+  }
+  buttonState3 = digitalRead(buttonPin3);
+  if ( buttonState3 == HIGH && t <= 3400 ) {
+    t = t + 100;
+  }
+}
+
+void step1() {
+  digitalWrite(8, HIGH);
+  digitalWrite(9, LOW);
+  digitalWrite(10, LOW);
+  digitalWrite(11, LOW);
+  delayMicroseconds(t);
+}
+void step2() {
+  digitalWrite(8, LOW);
+  digitalWrite(9, HIGH);
+  digitalWrite(10, LOW);
+  digitalWrite(11, LOW);
+  delayMicroseconds(t);
+}
+void step3() {
+  digitalWrite(8, LOW);
+  digitalWrite(9, LOW);
+  digitalWrite(10, HIGH);
+  digitalWrite(11, LOW);
+  delayMicroseconds(t);
+}
+void step4() {
+  digitalWrite(8, LOW);
+  digitalWrite(9, LOW);
+  digitalWrite(10, LOW);
+  digitalWrite(11, HIGH);
+  delayMicroseconds(t);
+}
+void stoprotate() {
+  digitalWrite(8, LOW);
+  digitalWrite(9, LOW);
+  digitalWrite(10, LOW);
+  digitalWrite(11, LOW);
+}
